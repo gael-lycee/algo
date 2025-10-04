@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Python's Gaël</title>
+  <title>Visionneuse de fichiers</title>
   <style>
     body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
     pre { background: #252526; padding: 15px; border-radius: 8px; overflow-x: auto; }
@@ -10,40 +10,50 @@
   </style>
 </head>
 <body>
-  <h1>Voici le scripte</h1>
+  <h1>Visionneuse de fichiers</h1>
   <div id="content">Chargement...</div>
 
   <script>
-    async function loadScript() {
-      // Récupère le paramètre ?n=
+    async function loadFile() {
       const params = new URLSearchParams(window.location.search);
-      const index = parseInt(params.get("n")) || 0;
+      const id = params.get("n"); // ex: ?n=1
+
+      if (!id) {
+        document.getElementById("content").innerText = "Veuillez indiquer un ID avec ?n=...";
+        return;
+      }
 
       try {
-        // Charge la liste depuis scripts.json
+        // Charger la liste des fichiers
         const res = await fetch("scripts.json");
         const data = await res.json();
-        const scripts = data.scripts;
 
-        if (index < 0 || index >= scripts.length) {
-          document.getElementById("content").innerText = "Script introuvable.";
+        if (!(id in data)) {
+          document.getElementById("content").innerText = "Fichier introuvable pour l’ID " + id;
           return;
         }
 
-        const fileName = scripts[index];
+        const fileName = data[id];
 
-        // Charge le contenu du script
-        const fileRes = await fetch(fileName);
-        const code = await fileRes.text();
-
-        // Affiche le code
-        document.getElementById("content").innerHTML = `<h2>${fileName}</h2><pre>${code}</pre>`;
+        // Si c'est un PDF → on l'intègre avec <embed>
+        if (fileName.endsWith(".pdf")) {
+          document.getElementById("content").innerHTML = `
+            <h2>${fileName}</h2>
+            <embed src="${fileName}" type="application/pdf" width="100%" height="600px" />
+          `;
+        } 
+        // Sinon → on affiche comme du texte (pour .py par ex.)
+        else {
+          const fileRes = await fetch(fileName);
+          const code = await fileRes.text();
+          document.getElementById("content").innerHTML = `<h2>${fileName}</h2><pre>${code}</pre>`;
+        }
       } catch (err) {
         document.getElementById("content").innerText = "Erreur de chargement : " + err;
       }
     }
 
-    loadScript();
+    loadFile();
   </script>
 </body>
 </html>
