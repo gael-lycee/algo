@@ -1,7 +1,5 @@
 {
-  "scripts": [
-    "scripts/1.py",
-    "scripts/calculatrice.py",
-    "scripts/boucles.py"
-  ]
+  "1": "types/Blockhaus d’observation pour tourelle TSF.pdf",
+  "2": "types/Fortification mixte.pdf",
+  "3": "types/Abri de combat.pdf"
 }
