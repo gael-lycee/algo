@@ -5,9 +5,15 @@
   <title>Visionneuse de fichiers</title>
   <style>
     body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
+    h1, h2 { color: #4fc3f7; }
     pre { background: #252526; padding: 15px; border-radius: 8px; overflow-x: auto; }
     a { color: #4fc3f7; }
   </style>
+
+  <!-- Prism.js pour coloration syntaxique -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 </head>
 <body>
   <h1>Visionneuse de fichiers</h1>
@@ -35,18 +41,28 @@
 
         const fileName = data[id];
 
-        // Si c'est un PDF → on l'intègre avec <embed>
+        // Affichage selon le type de fichier
         if (fileName.endsWith(".pdf")) {
           document.getElementById("content").innerHTML = `
             <h2>${fileName}</h2>
             <embed src="${fileName}" type="application/pdf" width="100%" height="600px" />
           `;
-        } 
-        // Sinon → on affiche comme du texte (pour .py par ex.)
-        else {
+        } else if (fileName.endsWith(".py")) {
+          // Fichier Python avec coloration syntaxique
           const fileRes = await fetch(fileName);
           const code = await fileRes.text();
-          document.getElementById("content").innerHTML = `<h2>${fileName}</h2><pre>${code}</pre>`;
+          document.getElementById("content").innerHTML = `
+            <h2>${fileName}</h2>
+            <pre><code class="language-python">${Prism.highlight(code, Prism.languages.python, 'python')}</code></pre>
+          `;
+        } else {
+          // Tous les autres fichiers (txt, md, etc.)
+          const fileRes = await fetch(fileName);
+          const code = await fileRes.text();
+          document.getElementById("content").innerHTML = `
+            <h2>${fileName}</h2>
+            <pre>${code}</pre>
+          `;
         }
       } catch (err) {
         document.getElementById("content").innerText = "Erreur de chargement : " + err;
