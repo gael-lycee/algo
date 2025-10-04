@@ -1,0 +1,7 @@
+{
+  "scripts": [
+    "scripts/hello.py",
+    "scripts/calculatrice.py",
+    "scripts/boucles.py"
+  ]
+}
