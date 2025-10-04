@@ -1,6 +1,6 @@
 {
   "scripts": [
-    "scripts/hello.py",
+    "scripts/1.py",
     "scripts/calculatrice.py",
     "scripts/boucles.py"
   ]
