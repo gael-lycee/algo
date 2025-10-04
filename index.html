@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Visionneuse de scripts Python</title>
+  <style>
+    body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
+    pre { background: #252526; padding: 15px; border-radius: 8px; overflow-x: auto; }
+    a { color: #4fc3f7; }
+  </style>
+</head>
+<body>
+  <h1>Visionneuse de code Python</h1>
+  <div id="content">Chargement...</div>
+
+  <script>
+    async function loadScript() {
+      // Récupère le paramètre ?n=
+      const params = new URLSearchParams(window.location.search);
+      const index = parseInt(params.get("n")) || 0;
+
+      try {
+        // Charge la liste depuis scripts.json
+        const res = await fetch("scripts.json");
+        const data = await res.json();
+        const scripts = data.scripts;
+
+        if (index < 0 || index >= scripts.length) {
+          document.getElementById("content").innerText = "Script introuvable.";
+          return;
+        }
+
+        const fileName = scripts[index];
+
+        // Charge le contenu du script
+        const fileRes = await fetch(fileName);
+        const code = await fileRes.text();
+
+        // Affiche le code
+        document.getElementById("content").innerHTML = `<h2>${fileName}</h2><pre>${code}</pre>`;
+      } catch (err) {
+        document.getElementById("content").innerText = "Erreur de chargement : " + err;
+      }
+    }
+
+    loadScript();
+  </script>
+</body>
+</html>
