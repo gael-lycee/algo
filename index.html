@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Visionneuse de fichiers</title>
   <style>
     body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
     h1, h2 { color: #4fc3f7; }
-    pre { background: #252526; padding: 15px; border-radius: 8px; overflow-x: auto; }
+    pre { background: #252526; padding: 15px; border-radius: 8px; overflow-x: auto; white-space: pre; }
     a { color: #4fc3f7; }
+    /* S'assure que la colonne de numéros n'écrase pas le texte */
+    pre.line-numbers { padding-left: 2.8em; }
   </style>
 
   <!-- Prism.js pour coloration syntaxique -->
@@ -24,12 +26,21 @@
   <div id="content">Chargement...</div>
 
   <script>
+    // Petite fonction pour échapper les caractères HTML dans le code source
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
     async function loadFile() {
+      const content = document.getElementById("content");
       const params = new URLSearchParams(window.location.search);
       const id = params.get("n"); // ex: ?n=1
 
       if (!id) {
-        document.getElementById("content").innerText = "Veuillez indiquer un ID avec ?n=...";
+        content.innerText = "Veuillez indiquer un ID avec ?n=...";
         return;
       }
 
@@ -39,37 +50,42 @@
         const data = await res.json();
 
         if (!(id in data)) {
-          document.getElementById("content").innerText = "Fichier introuvable pour l’ID " + id;
+          content.innerText = "Fichier introuvable pour l’ID " + id;
           return;
         }
 
         const fileName = data[id];
 
-        // Affichage selon le type de fichier
-        if (fileName.endsWith(".pdf")) {
-          document.getElementById("content").innerHTML = `
+        // PDF → embed
+        if (fileName.toLowerCase().endsWith(".pdf")) {
+          content.innerHTML = `
             <h2>${fileName}</h2>
-            <embed src="${fileName}" type="application/pdf" width="100%" height="600px" />
+            <embed src="${fileName}" type="application/pdf" width="100%" height="700px" />
           `;
-        } else if (fileName.endsWith(".py")) {
-          // Fichier Python avec coloration + numéros de lignes
-          const fileRes = await fetch(fileName);
-          const code = await fileRes.text();
-          document.getElementById("content").innerHTML = `
-            <h2>${fileName}</h2>
-            <pre class="line-numbers"><code class="language-python">${Prism.highlight(code, Prism.languages.python, 'python')}</code></pre>
-          `;
-        } else {
-          // Tous les autres fichiers
-          const fileRes = await fetch(fileName);
-          const code = await fileRes.text();
-          document.getElementById("content").innerHTML = `
-            <h2>${fileName}</h2>
-            <pre class="line-numbers"><code>${code}</code></pre>
-          `;
+          return;
         }
+
+        // Pour tous les autres fichiers texte (py, txt, json, etc.)
+        const fileRes = await fetch(fileName);
+        const code = await fileRes.text();
+
+        // Choix de la classe de language (utilise language-python si .py, sinon none)
+        const langClass = fileName.toLowerCase().endsWith(".py") ? "language-python" : "language-none";
+
+        // On place le code BRUT (échappé) dans le <code>, et on met la classe line-numbers sur <pre>
+        content.innerHTML = `
+          <h2>${fileName}</h2>
+          <pre class="line-numbers"><code class="${langClass}">${escapeHtml(code)}</code></pre>
+        `;
+
+        // Récupère l'élément <code> fraîchement inséré puis demande à Prism de le traiter
+        const codeEl = content.querySelector("pre code");
+        if (codeEl && window.Prism) {
+          Prism.highlightElement(codeEl); // ceci déclenche aussi le plugin line-numbers
+        }
+
       } catch (err) {
-        document.getElementById("content").innerText = "Erreur de chargement : " + err;
+        content.innerText = "Erreur de chargement : " + err;
       }
     }
 
