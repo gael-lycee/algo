@@ -1,2 +1,9 @@
-les notations                                  scritpe n° 1
+les notations..................................scritpe n° 1
   
+boucle si......................................scritpe n° 2
+
+boucle pour....................................scritpe n° 3
+                                               scritpe n° 4
+
+boucle tant que ...............................scritpe n° 5
+
