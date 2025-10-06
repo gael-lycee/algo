@@ -1,0 +1,30 @@
+>>>
+
+Jour :  1
+  Il fait beau, l'élève révise dans le jardin.
+    → Leçon 1 révisée.
+    → Leçon 2 révisée.
+    → Leçon 3 révisée.
+Jour :  2
+  Il fait beau, l'élève révise dans le jardin.
+    → Leçon 1 révisée.
+    → Leçon 2 révisée.
+    → Leçon 3 révisée.
+Jour :  3
+  Il pleut, l'élève révise à la maison.
+    → Leçon 1 révisée.
+    → Leçon 2 révisée.
+    → Leçon 3 révisée.
+Jour :  4
+  Il fait beau, l'élève révise dans le jardin.
+    → Leçon 1 révisée.
+    → Leçon 2 révisée.
+    → Leçon 3 révisée.
+Jour :  5
+  Il fait nuageux, l'élève révise à la bibliothèque.
+    → Leçon 1 révisée.
+    → Leçon 2 révisée.
+    → Leçon 3 révisée.
+Toutes les révisions sont terminées !
+
+>>>
