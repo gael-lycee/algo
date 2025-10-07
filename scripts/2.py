@@ -1,6 +1,6 @@
 #Boucle si
 
-a = int("entre un nombre entier")
+a = int(input("entre un nombre entier"))
 
 if a == 1:
     print("a est égale a 1")
